@@ -1,2 +1,11 @@
 language: csharp
 solution: ListSizeWin.sln
+deploy:
+  provider: releases
+  api_key:
+    secure: gyi88aIrmbvWkszmP6QLw9zTL3miIMWC57e2GzDMgOgEf0j8bGSCHP9/MaZsylpoqxv+uUzEVk1eghN598iGxQbZehr+TED6bR4/gSoc1Mx/50IPo1sZFJYI8MFh7J2omtwJIOMV2VHplfrJHaHZxpgQCpbjbNZd7wCoW5WftjOqrzpI401BHQf+3DKSedbnbCebtmRGV0BW+0XKjmGkIcno+paUXo9OFdSDHilICLZqqYCEGsHzuMWBqNa9e4c4H6VznYRm6woFnWAJTKgZfPv3CNFvpgp1XitLuc6qATR9QE2kMUq/GWDXDX1NuMz3bu17gR5f7JfyvzL9fkeORHsnjPMKAkQqErgJuo/PAo5oC9+17RewMa1xQHc7zhDa1ky7ksGmoKnE/3fmp/cV0lrcDpX/X+Kw4i+Z+Om5LXbTQPd8DuAsBEfbTgGzgLdJSlNcodghwHceci7/pFX3uZ4799oGZHjn+t7fT0krW31WM+jhd18mOKI8Ois8b6WZzfWsSiSHSqU53E5HbiUxQu/usK2l2BBXeAio6taL7oKcEqAT2p5IW0NuN1xu1A2uPJQTRgQquARJEu3d2yMXz99Qg61Kb47lG+EXZ+mi2XqQn1N/zDbPccLSalpoBxrAx0Bmm22xlYiKk1JfJcHf0bu+OTOebhcPhkO0TWrlbmw=
+  file: bin/lss.exe
+  skip_cleanup: true
+  on:
+    repo: onkbear/list-size-win
+    tags: true
