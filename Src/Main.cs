@@ -87,17 +87,18 @@ namespace ListSize
                 list.Sort((x, y) => y.Size.CompareTo(x.Size));
             }
 
+            Console.WriteLine("Type              Size Occupancy File");
             foreach (Result result in list)
             {
                 double percentage = (double)result.Size / totalSize * 100;
-                Console.WriteLine("{0} {1,20}{2,7:0.00}% {3}",
+                Console.WriteLine("{0} {1,20}{2,9:0.00}% {3}",
                     result.Type,
                     ConvertSizeFormat(result.Size),
                     Math.Round(percentage, 2, MidpointRounding.AwayFromZero),
                     result.Name);
             }
 
-            Console.WriteLine("All {0,18} 100.00%", ConvertSizeFormat(totalSize));
+            Console.WriteLine("All {0,18}   100.00%", ConvertSizeFormat(totalSize));
         }
 
         // Cals directory size
