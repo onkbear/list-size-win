@@ -60,25 +60,57 @@ namespace ListSize
 
             foreach (DirectoryInfo subDirInfo in dirInfo.GetDirectories())
             {
-                long dirsize = GetDirectorySize(subDirInfo);
-                totalSize += dirsize;
-
                 Result result = new Result();
                 result.Type = "D";
                 result.Name = subDirInfo.Name;
-                result.Size = dirsize;
+
+                try
+                {
+                    long dirsize = GetDirectorySize(subDirInfo);
+                    totalSize += dirsize;
+
+                    result.Size = dirsize;
+                }
+                catch (Exception exception)
+                {
+                    // TODO
+                    if (exception is UnauthorizedAccessException)
+                    {
+                        Console.WriteLine("UnauthorizedAccessException");
+                    }
+                    else if (exception is PathTooLongException)
+                    {
+                        Console.WriteLine("PathTooLongException");
+                    }
+                }
+
                 list.Add(result);
             }
 
             foreach (FileInfo fileInfo in dirInfo.GetFiles())
             {
-                totalSize += fileInfo.Length;
+                try
+                {
+                    totalSize += fileInfo.Length;
 
-                Result result = new Result();
-                result.Type = "F";
-                result.Name = fileInfo.Name;
-                result.Size = fileInfo.Length;
-                list.Add(result);
+                    Result result = new Result();
+                    result.Type = "F";
+                    result.Name = fileInfo.Name;
+                    result.Size = fileInfo.Length;
+                    list.Add(result);
+                }
+                catch (Exception exception)
+                {
+                    // TODO
+                    if (exception is UnauthorizedAccessException)
+                    {
+                        Console.WriteLine("UnauthorizedAccessException");
+                    }
+                    else if (exception is PathTooLongException)
+                    {
+                        Console.WriteLine("PathTooLongException");
+                    }
+                }
             }
 
             // Sort
@@ -107,40 +139,27 @@ namespace ListSize
             long size = 0;
 
             // Calc files in current directory
-            try
+            foreach (FileInfo fileInfo in dirInfo.GetFiles())
             {
-                Parallel.ForEach(dirInfo.GetFiles(), fileInfo => {
-                    size += fileInfo.Length;
-                });
-            }
-            catch (Exception exception)
-            {
-                // TODO
-                if (exception is UnauthorizedAccessException)
-                {
-                }
-                else if (exception is PathTooLongException)
-                {
-                }
+                size += fileInfo.Length;
             }
 
             // Calc sub directories
-            try
-            {
-                Parallel.ForEach(dirInfo.GetDirectories(), subDirInfo => {
-                    size += GetDirectorySize(subDirInfo);
-                });
-            }
-            catch (Exception exception)
-            {
-                // TODO
-                if (exception is UnauthorizedAccessException)
+            Parallel.ForEach(
+                dirInfo.GetDirectories(),   // source collection
+                () => 0L,                   // thread local initializer
+                (subDirInfo, loopState, localSum) => {
+                    localSum += GetDirectorySize(subDirInfo);
+                    return localSum;
+                },
+                (localSum) =>               // thread local aggregator
                 {
+                    lock (dirInfo)
+                    {
+                        size += localSum;
+                    }
                 }
-                else if (exception is PathTooLongException)
-                {
-                }
-            }
+            );
 
             return size;
         }
