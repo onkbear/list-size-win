@@ -4,9 +4,12 @@
 
 List directory contents size
 
-## Usage
+## Installation
 
+* Download the latest `lss.exe` from [here](https://github.com/onkbear/list-size-win/releases).
 * Add a directory that existing `lss.exe` to the `PATH` environment variable.
+
+## Usage
 
 ```
 > lss [OPTION] [FILE]
