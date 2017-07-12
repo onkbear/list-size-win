@@ -5,11 +5,17 @@ using System.Collections.Generic;
 
 namespace ListSize
 {
-    struct Result
+    class Result
     {
+        public Result()
+        {
+            Size = 0;
+            IsError = false;
+        }
         public string Type { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }
+        public bool IsError { get; set; }
     }
 
     class Program
@@ -58,59 +64,29 @@ namespace ListSize
 
             System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
 
+            // List directories
             foreach (DirectoryInfo subDirInfo in dirInfo.GetDirectories())
-            {
-                Result result = new Result();
+            {                
+                Result result = GetDirectorySize(subDirInfo);
                 result.Type = "D";
                 result.Name = subDirInfo.Name;
-
-                try
-                {
-                    long dirsize = GetDirectorySize(subDirInfo);
-                    totalSize += dirsize;
-
-                    result.Size = dirsize;
-                }
-                catch (Exception exception)
-                {
-                    // TODO
-                    if (exception is UnauthorizedAccessException)
-                    {
-                        Console.WriteLine("UnauthorizedAccessException");
-                    }
-                    else if (exception is PathTooLongException)
-                    {
-                        Console.WriteLine("PathTooLongException");
-                    }
-                }
-
                 list.Add(result);
+
+                // Add to total
+                totalSize += result.Size;
             }
 
+            // List files
             foreach (FileInfo fileInfo in dirInfo.GetFiles())
             {
-                try
-                {
-                    totalSize += fileInfo.Length;
+                Result result = new Result();
+                result.Type = "F";
+                result.Name = fileInfo.Name;
+                result.Size = fileInfo.Length;
+                list.Add(result);
 
-                    Result result = new Result();
-                    result.Type = "F";
-                    result.Name = fileInfo.Name;
-                    result.Size = fileInfo.Length;
-                    list.Add(result);
-                }
-                catch (Exception exception)
-                {
-                    // TODO
-                    if (exception is UnauthorizedAccessException)
-                    {
-                        Console.WriteLine("UnauthorizedAccessException");
-                    }
-                    else if (exception is PathTooLongException)
-                    {
-                        Console.WriteLine("PathTooLongException");
-                    }
-                }
+                // Add to total
+                totalSize += fileInfo.Length;
             }
 
             // Sort
@@ -122,46 +98,76 @@ namespace ListSize
             Console.WriteLine("Type              Size Occupancy File");
             foreach (Result result in list)
             {
+                string message = "";
+                if (result.IsError)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    message = "[Failed]";
+                }
                 double percentage = (double)result.Size / totalSize * 100;
-                Console.WriteLine("{0} {1,20}{2,9:0.00}% {3}",
+                Console.WriteLine("{0} {1,20}{2,9:0.00}% {3} {4}",
                     result.Type,
                     ConvertSizeFormat(result.Size),
                     Math.Round(percentage, 2, MidpointRounding.AwayFromZero),
-                    result.Name);
+                    result.Name,
+                    message);
+                Console.ResetColor();
             }
 
             Console.WriteLine("All {0,18}   100.00%", ConvertSizeFormat(totalSize));
         }
 
         // Cals directory size
-        private static long GetDirectorySize(DirectoryInfo dirInfo)
+        private static Result GetDirectorySize(DirectoryInfo dirInfo)
         {
             long size = 0;
+            Result result = new Result();
 
-            // Calc files in current directory
-            foreach (FileInfo fileInfo in dirInfo.GetFiles())
+            try
             {
-                size += fileInfo.Length;
+                // Calc files in current directory
+                foreach (FileInfo fileInfo in dirInfo.GetFiles())
+                {
+                    size += fileInfo.Length;
+                }
+            }
+            catch (Exception)
+            {
+                result.IsError = true;
             }
 
-            // Calc sub directories
-            Parallel.ForEach(
-                dirInfo.GetDirectories(),   // source collection
-                () => 0L,                   // thread local initializer
-                (subDirInfo, loopState, localSum) => {
-                    localSum += GetDirectorySize(subDirInfo);
-                    return localSum;
-                },
-                (localSum) =>               // thread local aggregator
-                {
-                    lock (dirInfo)
+            try
+            {
+                // Calc sub directories
+                Parallel.ForEach(
+                    dirInfo.GetDirectories(),   // source collection
+                    () => 0L,                   // thread local initializer
+                    (subDirInfo, loopState, localSum) =>
                     {
-                        size += localSum;
+                        Result resultTemp = GetDirectorySize(subDirInfo);
+                        localSum += resultTemp.Size;
+                        if (resultTemp.IsError)
+                        {
+                            result.IsError = resultTemp.IsError;
+                        }
+                        return localSum;
+                    },
+                    (localSum) =>               // thread local aggregator
+                    {
+                        lock (dirInfo)
+                        {
+                            size += localSum;
+                        }
                     }
-                }
-            );
+                );
+            }
+            catch (Exception)
+            {
+                result.IsError = true;
+            }
 
-            return size;
+            result.Size = size;
+            return result;
         }
 
         private static string ConvertSizeFormat(long size)
