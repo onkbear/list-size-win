@@ -5,21 +5,21 @@ using System.Collections.Generic;
 
 namespace ListSize
 {
-    class Result
+    public class Program
     {
-        public Result()
+        public class Result
         {
-            Size = 0;
-            IsError = false;
+            public Result()
+            {
+                Size = 0;
+                IsError = false;
+            }
+            public string Type { get; set; }
+            public string Name { get; set; }
+            public long Size { get; set; }
+            public bool IsError { get; set; }
         }
-        public string Type { get; set; }
-        public string Name { get; set; }
-        public long Size { get; set; }
-        public bool IsError { get; set; }
-    }
 
-    class Program
-    {
         // The static method, Main, is the application's entry point.
         public static int Main(string[] args)
         {
@@ -118,7 +118,7 @@ namespace ListSize
         }
 
         // Cals directory size
-        private static Result GetDirectorySize(DirectoryInfo dirInfo)
+        public static Result GetDirectorySize(DirectoryInfo dirInfo)
         {
             long size = 0;
             Result result = new Result();
