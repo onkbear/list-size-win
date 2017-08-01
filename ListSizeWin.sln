@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListSizeWin", "Src\ListSizeWin.csproj", "{8F9ED707-8493-4CB4-BB20-87CD09BE06EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListSizeWinTests", "ListSizeWinTests\ListSizeWinTests.csproj", "{2C01595C-DF59-41D5-A7EF-8F28A99E0250}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{8F9ED707-8493-4CB4-BB20-87CD09BE06EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F9ED707-8493-4CB4-BB20-87CD09BE06EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F9ED707-8493-4CB4-BB20-87CD09BE06EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C01595C-DF59-41D5-A7EF-8F28A99E0250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C01595C-DF59-41D5-A7EF-8F28A99E0250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C01595C-DF59-41D5-A7EF-8F28A99E0250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C01595C-DF59-41D5-A7EF-8F28A99E0250}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
