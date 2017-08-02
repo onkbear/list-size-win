@@ -1,4 +1,4 @@
-﻿#if NUNIT
+﻿#if !MSTEST
 using NUnit.Framework;
 using TestClass = NUnit.Framework.TestFixtureAttribute;
 using TestMethod = NUnit.Framework.TestAttribute;
