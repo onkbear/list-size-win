@@ -1,5 +1,11 @@
 language: csharp
 solution: ListSizeWin.sln
+install:
+  - nuget restore ListSizeWin.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+script:
+  - xbuild /p:Configuration=Release /p:DefineConstants="NUNIT" ListSizeWin.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./ListSizeWinTests/bin/Release/ListSizeWinTests.dll
 deploy:
   provider: releases
   api_key:
