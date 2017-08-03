@@ -4,7 +4,7 @@ install:
   - nuget restore ListSizeWin.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
-  - xbuild /p:Configuration=Release ListSizeWin.sln
+  - xbuild /p:Configuration=Release /p:DebugSymbols=False ListSizeWin.sln
   - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./ListSizeWinTests/bin/Release/ListSizeWinTests.dll
 deploy:
   provider: releases
