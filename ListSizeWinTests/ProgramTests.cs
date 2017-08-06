@@ -31,7 +31,7 @@ namespace ListSize.Tests
             // Create test file
             using (StreamWriter sw = new StreamWriter("temp/10byte.txt"))
             {
-                sw.WriteLine("00000000");
+                sw.Write("0000000000");
             }
 
             // Run
